@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Sales Forecast Studio</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: rgba(255, 255, 255, 0.08);
+            --text: #eaf0ff;
+            --muted: #aab6d3;
+            --border: rgba(255, 255, 255, 0.12);
+            --primary: #6d7cff;
+            --primary-2: #8d5cf6;
+            --danger-bg: #fff1f2;
+            --danger-text: #b42318;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            --radius-xl: 24px;
+            --radius-lg: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(109, 124, 255, 0.22), transparent 30%),
+                radial-gradient(circle at top right, rgba(141, 92, 246, 0.18), transparent 25%),
+                linear-gradient(135deg, #0b1020 0%, #111933 45%, #0d1429 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .page {
+            width: min(1400px, 94%);
+            margin: 0 auto;
+            padding: 28px 0 40px;
+        }
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .hero-left h1 {
+            margin: 0 0 10px 0;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.05;
+            letter-spacing: -1px;
+        }
+
+        .hero-left p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1rem;
+            max-width: 760px;
+        }
+
+        .hero-badge {
+            background: linear-gradient(135deg, rgba(109, 124, 255, 0.25), rgba(141, 92, 246, 0.28));
+            border: 1px solid var(--border);
+            color: #f3f6ff;
+            padding: 12px 16px;
+            border-radius: 999px;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            white-space: nowrap;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .glass-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+        }
+
+        .form-panel {
+            padding: 26px;
+        }
+
+        .results-panel {
+            padding: 24px;
+            position: sticky;
+            top: 18px;
+        }
+
+        .panel-title {
+            margin: 0 0 8px;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .panel-subtitle {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 0.96rem;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .section h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+            color: #ffffff;
+        }
+
+        .section p {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #f3f6ff;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.95);
+            color: #101828;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.22s ease;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(109, 124, 255, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .field small {
+            color: var(--muted);
+            font-size: 0.76rem;
+            line-height: 1.4;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            border: none;
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 0.96rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: white;
+            flex: 1;
+            box-shadow: 0 10px 30px rgba(109, 124, 255, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.14);
+        }
+
+        .alert {
+            border-radius: 16px;
+            padding: 16px 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .alert-error {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+
+        .result-hero {
+            background: linear-gradient(135deg, rgba(109, 124, 255, 0.24), rgba(141, 92, 246, 0.24));
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .result-kicker {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            color: #d6deff;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            font-weight: 800;
+            line-height: 1;
+            margin: 0 0 10px;
+            color: white;
+        }
+
+        .result-model {
+            margin: 0;
+            color: #e8edff;
+            font-size: 0.98rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 18px;
+            color: #101828;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: #667085;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1.1;
+        }
+
+        .insight-box,
+        .chart-box,
+        .placeholder-box {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .insight-box h3,
+        .chart-box h3,
+        .placeholder-box h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .insight-box p,
+        .chart-box p,
+        .placeholder-box p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+
+        .chart-box {
+            margin-top: 18px;
+        }
+
+        .chart-wrap {
+            margin-top: 14px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .placeholder-box {
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1120px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .results-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .grid-2,
+            .grid-3,
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .form-panel,
+            .results-panel {
+                padding: 18px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+
+            .hero {
+                align-items: flex-start;
+            }
+
+            .hero-badge {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <header class="hero">
+            <div class="hero-left">
+                <h1>Weekly Sales Forecast Studio</h1>
+                <p>
+                    Une interface premium pour prédire les ventes hebdomadaires par magasin et département,
+                    comparer Random Forest et XGBoost, et présenter le résultat dans un format analytique.
+                </p>
+            </div>
+            <div class="hero-badge">
+                ML Forecasting • Flask • RF + XGBoost
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <section class="glass-panel form-panel">
+                <h2 class="panel-title">Configuration de la prédiction</h2>
+                <p class="panel-subtitle">
+                    Renseigne les variables métier, économiques et promotionnelles pour générer la prochaine prédiction.
+                </p>
+
+                <form method="POST">
+
+                    <div class="section">
+                        <h3>1. Forecast Setup</h3>
+                        <p>Informations principales du scénario de prévision.</p>
+
+                        <div class="grid grid-2">
+                            <div class="field">
+                                <label for="Store">Store ID</label>
+                                <input type="text" id="Store" name="Store" value="{{ form_data.get('Store', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Dept">Department ID</label>
+                                <input type="number" id="Dept" name="Dept" value="{{ form_data.get('Dept', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Date">Forecast Date</label>
+                                <input type="date" id="Date" name="Date" value="{{ form_data.get('Date', '') }}" required>
+                                <small>La date doit correspondre à la prochaine semaine autorisée.</small>
+                            </div>
+
+                            <div class="field">
+                                <label for="model_type">Model Selection</label>
+                                <select id="model_type" name="model_type">
+                                    <option value="rf" {% if form_data.get('model_type') == 'rf' %}selected{% endif %}>Random Forest Regressor</option>
+                                    <option value="xgb" {% if form_data.get('model_type') == 'xgb' %}selected{% endif %}>Extreme Gradient Boosting (XGBoost)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>2. Economic & Store Context</h3>
+                        <p>Contexte magasin, environnement économique et conditions externes.</p>
+
+                        <div class="grid grid-3">
+                            <div class="field">
+                                <label for="Temperature">Temperature</label>
+                                <input type="number" step="any" id="Temperature" name="Temperature" value="{{ form_data.get('Temperature', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Fuel_Price">Fuel Price</label>
+                                <input type="number" step="any" id="Fuel_Price" name="Fuel_Price" value="{{ form_data.get('Fuel_Price', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="CPI">CPI</label>
+                                <input type="number" step="any" id="CPI" name="CPI" value="{{ form_data.get('CPI', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Unemployment">Unemployment</label>
+                                <input type="number" step="any" id="Unemployment" name="Unemployment" value="{{ form_data.get('Unemployment', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Size">Store Size</label>
+                                <input type="number" id="Size" name="Size" value="{{ form_data.get('Size', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Type">Store Type</label>
+                                <select id="Type" name="Type" required>
+                                    <option value="A" {% if form_data.get('Type') == 'A' %}selected{% endif %}>Type A</option>
+                                    <option value="B" {% if form_data.get('Type') == 'B' %}selected{% endif %}>Type B</option>
+                                    <option value="C" {% if form_data.get('Type') == 'C' %}selected{% endif %}>Type C</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>3. Promotion Inputs</h3>
+                        <p>Variables promotionnelles et intensité marketing.</p>
+
+                        <div class="grid grid-2">
+                            <div class="field">
+                                <label for="MarkDown1">Promotion Signal 1</label>
+                                <input type="number" step="any" id="MarkDown1" name="MarkDown1" value="{{ form_data.get('MarkDown1', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="MarkDown2">Promotion Signal 2</label>
+                                <input type="number" step="any" id="MarkDown2" name="MarkDown2" value="{{ form_data.get('MarkDown2', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="MarkDown3">Promotion Signal 3</label>
+                                <input type="number" step="any" id="MarkDown3" name="MarkDown3" value="{{ form_data.get('MarkDown3', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="MarkDown4">Promotion Signal 4</label>
+                                <input type="number" step="any" id="MarkDown4" name="MarkDown4" value="{{ form_data.get('MarkDown4', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="MarkDown5">Promotion Signal 5</label>
+                                <input type="number" step="any" id="MarkDown5" name="MarkDown5" value="{{ form_data.get('MarkDown5', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="IsHoliday">Holiday Week</label>
+                                <input type="number" min="0" max="1" id="IsHoliday" name="IsHoliday" value="{{ form_data.get('IsHoliday', '') }}" required>
+                                <small>Utilise 0 pour non et 1 pour oui.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>4. Event Flags</h3>
+                        <p>Encodage manuel des semaines événementielles.</p>
+
+                        <div class="grid grid-3">
+                            <div class="field">
+                                <label for="Black_Friday">Black Friday</label>
+                                <input type="number" min="0" max="1" id="Black_Friday" name="Black_Friday" value="{{ form_data.get('Black_Friday', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Thanksgiving">Thanksgiving</label>
+                                <input type="number" min="0" max="1" id="Thanksgiving" name="Thanksgiving" value="{{ form_data.get('Thanksgiving', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Xmas_Week">Christmas Week</label>
+                                <input type="number" min="0" max="1" id="Xmas_Week" name="Xmas_Week" value="{{ form_data.get('Xmas_Week', '') }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn-primary" type="submit">Generate Forecast</button>
+                        <button class="btn-secondary" type="reset">Reset Form</button>
+                    </div>
+                </form>
+            </section>
+
+            <aside class="glass-panel results-panel">
+                <h2 class="panel-title">Forecast Results</h2>
+                <p class="panel-subtitle">
+                    Zone d’analyse et de restitution des résultats de prédiction.
+                </p>
+
+                {% if error %}
+                    <div class="alert alert-error">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                {% if prediction is defined %}
+                    <div class="result-hero">
+                        <div class="result-kicker">Predicted Weekly Sales</div>
+                        <div class="result-value">{{ prediction }}</div>
+                        <p class="result-model">Modèle sélectionné : {{ model_used }}</p>
+                    </div>
+                {% else %}
+                    <div class="placeholder-box">
+                        <h3>Prêt pour une prédiction</h3>
+                        <p>
+                            Remplis le formulaire à gauche pour générer une estimation des ventes hebdomadaires.
+                            Les résultats, la comparaison des modèles et le graphique s’afficheront ici.
+                        </p>
+                    </div>
+                {% endif %}
+
+                {% if prediction_rf is defined and prediction_xgb is defined %}
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Random Forest</div>
+                            <div class="stat-value">{{ prediction_rf }}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">XGBoost</div>
+                            <div class="stat-value">{{ prediction_xgb }}</div>
+                        </div>
+                    </div>
+
+                    <div class="insight-box">
+                        <h3>Model Comparison Insight</h3>
+                        <p>
+                            Écart entre les deux modèles :
+                            <strong>{{ (prediction_rf - prediction_xgb)|abs }}</strong>.
+                            Compare cette différence avant de retenir une décision finale.
+                        </p>
+                    </div>
+
+                    <div class="chart-box">
+                        <h3>Prediction Comparison</h3>
+                        <p>Visualisation directe des sorties de Random Forest et XGBoost.</p>
+
+                        <div class="chart-wrap">
+                            <canvas id="predictionChart"></canvas>
+                        </div>
+                                        </div>
+                    <script>
+                        const canvas = document.getElementById("predictionChart");
+
+                        if (canvas) {
+                            const ctx = canvas.getContext("2d");
+                            const predictionRf = Number("{{ prediction_rf }}");
+                            const predictionXgb = Number("{{ prediction_xgb }}");
+
+                            new Chart(ctx, {
+                                type: "bar",
+                                data: {
+                                    labels: ["Random Forest", "XGBoost"],
+                                    datasets: [{
+                                        label: "Weekly Sales Prediction",
+                                        data: [predictionRf, predictionXgb],
+                                        borderRadius: 10
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            display: true
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: false
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    </script>
+                    
+                {% endif %}
+
+                
+                
+            </aside>
+        </main>
+    </div>
+</body>
+</html>
