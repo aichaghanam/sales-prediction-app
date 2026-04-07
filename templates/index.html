@@ -484,6 +484,32 @@
             line-height: 1.6;
         }
 
+        .chart-box {
+            margin-top: 18px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .chart-box h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .chart-box p {
+            margin: 0 0 14px;
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 280px;
+        }
+
         @media (max-width: 1120px) {
             .hero,
             .dashboard {
@@ -721,6 +747,18 @@
                             Prévision calculée pour la semaine sélectionnée.
                         </p>
                     </div>
+
+                    <div class="chart-box">
+                        <h3>Historique récent vs prévision</h3>
+                        <p>
+                            Comparaison entre la moyenne des 4 dernières semaines, la dernière semaine observée
+                            et la prévision pour le couple <strong>Store {{ form_data.get('Store', '-') }}</strong>
+                            et <strong>Dept {{ form_data.get('Dept', '-') }}</strong>.
+                        </p>
+                        <div class="chart-wrapper">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
                 {% else %}
                     <div class="placeholder-box">
                         <h3>Prêt pour une prédiction</h3>
@@ -736,5 +774,107 @@
             </aside>
         </main>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% if prediction is defined %}
+<script>
+    const labels = {{ chart_labels | tojson }};
+    const values = {{ chart_values | tojson }};
+
+    const canvas = document.getElementById("salesChart");
+
+    if (canvas && labels.length > 0 && values.length > 0) {
+        const valueLabelPlugin = {
+            id: "valueLabelPlugin",
+            afterDatasetsDraw(chart) {
+                const { ctx } = chart;
+                ctx.save();
+                ctx.font = "bold 12px Arial";
+                ctx.fillStyle = "#eaf0ff";
+                ctx.textAlign = "center";
+
+                const meta = chart.getDatasetMeta(0);
+                meta.data.forEach((bar, index) => {
+                    const value = values[index];
+                    ctx.fillText(
+                        Number(value).toLocaleString(),
+                        bar.x,
+                        bar.y - 10
+                    );
+                });
+
+                ctx.restore();
+            }
+        };
+
+        new Chart(canvas, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Weekly Sales",
+                    data: values,
+                    backgroundColor: [
+                        "rgba(255,255,255,0.75)",
+                        "rgba(0, 113, 206, 0.8)",
+                        "rgba(255, 194, 32, 0.95)"
+                    ],
+                    borderColor: [
+                        "rgba(255,255,255,0.15)",
+                        "rgba(255,255,255,0.15)",
+                        "rgba(255, 194, 32, 1)"
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 28
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return "Weekly Sales : " + Number(context.raw).toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: "#d8e0f8",
+                            maxRotation: 0,
+                            minRotation: 0
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: "#d8e0f8"
+                        },
+                        grid: {
+                            color: "rgba(255,255,255,0.08)"
+                        }
+                    }
+                }
+            },
+            plugins: [valueLabelPlugin]
+        });
+    }
+</script>
+{% endif %}
 </body>
 </html>

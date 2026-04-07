@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from predict_utils import predict_sales, history
 import pandas as pd
-
+import json
 app = Flask(__name__)
 
 
@@ -99,30 +99,66 @@ def home():
                 thanksgiving=thanksgiving,
                 xmas_week=xmas_week
             )
+            # ===== Graphique amélioré : historique récent + prévision =====
+            hist_sd = hist_sd.sort_values("Date").copy()
 
+            last_4 = hist_sd.tail(4)
+
+            if len(last_4) < 4:
+                chart_labels = ["Prévision"]
+                chart_values = [round(prediction, 2)]
+            else:
+                mean_4w = round(last_4["Weekly_Sales"].mean(), 2)
+                last_week = round(last_4["Weekly_Sales"].iloc[-1], 2)
+
+                chart_labels = [
+                    "Moy 4 semaines",
+                    "Dernière semaine",
+                    "Prévision"
+                ]
+                chart_values = [
+                    mean_4w,
+                    last_week,
+                    round(prediction, 2)
+                ]
+
+        
             return render_template(
                 "index.html",
                 prediction=round(prediction, 2),
                 form_data=request.form,
                 model_used="LightGBM",
-                error=None
+                error=None,
+                chart_labels=chart_labels,
+                chart_values=chart_values
             )
 
         except ValueError:
             return render_template(
                 "index.html",
                 error="Entrée invalide : merci de saisir uniquement des nombres dans les champs numériques.",
-                form_data=request.form
+                form_data=request.form,
+                chart_labels="[]",
+                chart_values="[]"
             )
 
         except Exception as e:
             return render_template(
                 "index.html",
                 error=f"Une erreur est survenue : {str(e)}",
-                form_data=request.form
+                form_data=request.form,
+                chart_labels="[]",
+                chart_values="[]"
             )
 
-    return render_template("index.html", form_data={}, error=None)
+  
+    return render_template(
+        "index.html",
+        form_data={},
+        error=None,
+        chart_labels="[]",
+        chart_values="[]"
+    )
 
 
 if __name__ == "__main__":
