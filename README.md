@@ -32,22 +32,25 @@ https://sales-prediction-app-942r.onrender.com
 ---
 
 ## Structure du projet
+
+```text
+.
 ├── app.py
 ├── predict_utils.py
 ├── prepare_data.py
 ├── train_lgbm_model.py
 ├── requirements.txt
 ├── templates/
-│ └── index.html
+│   └── index.html
 ├── data/
-│ ├── train.csv
-│ ├── features.csv
-│ └── stores.csv
+│   ├── train.csv
+│   ├── features.csv
+│   └── stores.csv
 ├── model_lgbm.pkl
 ├── features_final.pkl
 ├── encoders.pkl
 ├── history.pkl
-
+```
 
 ---
 
@@ -125,41 +128,66 @@ Features utilisées :
 git clone https://github.com/your-username/walmart-forecast.git
 cd walmart-forecast
 pip install -r requirements.txt
-Lancement local
-python app.py
+```
 
-Accès :
+---
+
+## Lancement local
+
+```bash
+python app.py
+```
+
+Accès :  
 http://127.0.0.1:5000/
 
-Déploiement
+---
+
+## Déploiement
 
 L’application est déployée sur Render en tant que Web Service.
 
 Configuration :
 
-Environnement : Python
-Commande de démarrage :
+- Environnement : Python  
+- Commande de démarrage :
+
+```bash
 gunicorn app:app
-Fichier de dépendances :
-requirements.txt
-Artefacts chargés au runtime :
-model_lgbm.pkl
-features_final.pkl
-encoders.pkl
-history.pkl
-Dépendances principales
-Flask
-pandas
-numpy
-scikit-learn
-lightgbm
-gunicorn
-Améliorations possibles
-API REST pour prédictions batch
-Dashboard interactif
-Dockerisation
-Automatisation des features événementielles
-Déploiement cloud avancé
-Licence
+```
+
+- Fichier de dépendances :  
+requirements.txt  
+
+- Artefacts chargés au runtime :
+  - model_lgbm.pkl  
+  - features_final.pkl  
+  - encoders.pkl  
+  - history.pkl  
+
+---
+
+## Dépendances principales
+
+- Flask  
+- pandas  
+- numpy  
+- scikit-learn  
+- lightgbm  
+- gunicorn  
+
+---
+
+## Améliorations possibles
+
+- API REST pour prédictions batch  
+- Dashboard interactif  
+- Dockerisation  
+- Automatisation des features événementielles  
+- Déploiement cloud avancé  
+
+---
+
+## Licence
 
 MIT License
