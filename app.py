@@ -130,7 +130,8 @@ def home():
                 model_used="LightGBM",
                 error=None,
                 chart_labels=chart_labels,
-                chart_values=chart_values
+                chart_values=chart_values,
+                date=date
             )
 
         except ValueError:

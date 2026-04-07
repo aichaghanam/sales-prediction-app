@@ -752,8 +752,14 @@
                         <h3>Historique récent vs prévision</h3>
                         <p>
                             Comparaison entre la moyenne des 4 dernières semaines, la dernière semaine observée
-                            et la prévision pour le couple <strong>Store {{ form_data.get('Store', '-') }}</strong>
-                            et <strong>Dept {{ form_data.get('Dept', '-') }}</strong>.
+                            et la prévision pour le couple
+                            <span style="color:#ffc220; font-weight:600;">
+                            Store {{ form_data.get('Store', '-') }} / Dept {{ form_data.get('Dept', '-') }}
+                            </span>
+                            pour la semaine du
+                            <span style="color:#ffc220; font-weight:600;">
+                            {{ date }}
+                            </span>.
                         </p>
                         <div class="chart-wrapper">
                             <canvas id="salesChart"></canvas>
@@ -769,7 +775,7 @@
                 {% endif %}
 
                 <p class="footer-note">
-                    Vérifie les valeurs avant validation.
+                    Les résultats dépendent des données saisies et de l’historique disponible pour le Store et le Département sélectionnés.
                 </p>
             </aside>
         </main>
