@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Sales Forecast Studio</title>
+    <title>Walmart Weekly Sales Forecast</title>
     <style>
         :root {
             --bg: #0b1020;
+            --bg-2: #111933;
             --panel: rgba(255, 255, 255, 0.08);
+            --panel-soft: rgba(255, 255, 255, 0.06);
             --text: #eaf0ff;
             --muted: #aab6d3;
             --border: rgba(255, 255, 255, 0.12);
-            --primary: #6d7cff;
-            --primary-2: #8d5cf6;
+            --primary: #0071ce;
+            --primary-2: #004c91;
+            --accent: #ffc220;
             --danger-bg: #fff1f2;
             --danger-text: #b42318;
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            --success: #22c55e;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
             --radius-xl: 24px;
             --radius-lg: 18px;
+            --radius-md: 14px;
         }
 
         * {
@@ -28,57 +33,144 @@
             margin: 0;
             font-family: Inter, Arial, sans-serif;
             background:
-                radial-gradient(circle at top left, rgba(109, 124, 255, 0.22), transparent 30%),
-                radial-gradient(circle at top right, rgba(141, 92, 246, 0.18), transparent 25%),
-                linear-gradient(135deg, #0b1020 0%, #111933 45%, #0d1429 100%);
+                radial-gradient(circle at top left, rgba(0, 113, 206, 0.22), transparent 30%),
+                radial-gradient(circle at top right, rgba(255, 194, 32, 0.10), transparent 22%),
+                linear-gradient(135deg, #0b1020 0%, #111933 48%, #0d1429 100%);
             color: var(--text);
             min-height: 100vh;
         }
 
         .page {
-            width: min(1400px, 94%);
+            width: min(1380px, 94%);
             margin: 0 auto;
             padding: 28px 0 40px;
         }
 
         .hero {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 24px;
+            align-items: stretch;
             margin-bottom: 28px;
+        }
+
+        .hero-left,
+        .hero-photo {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+        }
+
+        .hero-left {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-topline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
             flex-wrap: wrap;
         }
 
+        .spark {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: rgba(255, 194, 32, 0.16);
+            border: 1px solid rgba(255, 194, 32, 0.24);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.25rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .hero-label {
+            color: #d9e7ff;
+            font-size: 0.95rem;
+        }
+
         .hero-left h1 {
-            margin: 0 0 10px 0;
-            font-size: clamp(2rem, 4vw, 3.2rem);
+            margin: 0 0 12px 0;
+            font-size: clamp(2.1rem, 4vw, 3.3rem);
             line-height: 1.05;
             letter-spacing: -1px;
         }
 
         .hero-left p {
-            margin: 0;
+            margin: 0 0 18px 0;
             color: var(--muted);
             font-size: 1rem;
+            line-height: 1.7;
             max-width: 760px;
         }
 
+        .hero-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .hero-badge {
-            background: linear-gradient(135deg, rgba(109, 124, 255, 0.25), rgba(141, 92, 246, 0.28));
+            background: linear-gradient(135deg, rgba(0, 113, 206, 0.22), rgba(0, 76, 145, 0.26));
             border: 1px solid var(--border);
             color: #f3f6ff;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 999px;
-            font-size: 0.95rem;
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
-            white-space: nowrap;
+            font-size: 0.88rem;
+        }
+
+        .hero-photo {
+            position: relative;
+            overflow: hidden;
+            min-height: 320px;
+            background:
+                linear-gradient(to top, rgba(11,16,32,0.84), rgba(11,16,32,0.16)),
+                url("{{ url_for('static', filename='walmart_store.jpg') }}") center/cover no-repeat;
+        }
+
+        .hero-photo-content {
+            position: absolute;
+            left: 22px;
+            right: 22px;
+            bottom: 22px;
+        }
+
+        .hero-photo-chip {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.16);
+            font-size: 0.8rem;
+            color: #f2f6ff;
+        }
+
+        .hero-photo-title {
+            font-size: 1.18rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .hero-photo-text {
+            color: #d8e0f8;
+            font-size: 0.92rem;
+            line-height: 1.55;
+            max-width: 460px;
         }
 
         .dashboard {
             display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
+            grid-template-columns: 1.08fr 0.92fr;
             gap: 24px;
             align-items: start;
         }
@@ -111,26 +203,67 @@
             margin: 0 0 22px;
             color: var(--muted);
             font-size: 0.96rem;
+            line-height: 1.6;
+        }
+
+        .helper-box {
+            margin-bottom: 18px;
+            padding: 15px 16px;
+            border-radius: var(--radius-md);
+            background: rgba(255,255,255,0.05);
+            border: 1px dashed rgba(255,255,255,0.12);
+        }
+
+        .helper-box strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .helper-box span {
+            color: var(--muted);
+            font-size: 0.84rem;
+            line-height: 1.6;
         }
 
         .section {
-            background: rgba(255, 255, 255, 0.06);
+            background: var(--panel-soft);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 18px;
             margin-bottom: 18px;
         }
 
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
         .section h3 {
-            margin: 0 0 6px;
+            margin: 0;
             font-size: 1rem;
             color: #ffffff;
+        }
+
+        .section-tag {
+            font-size: 0.74rem;
+            color: #dbe4ff;
+            background: rgba(0, 113, 206, 0.18);
+            border: 1px solid rgba(0, 113, 206, 0.22);
+            border-radius: 999px;
+            padding: 6px 10px;
         }
 
         .section p {
             margin: 0 0 16px;
             color: var(--muted);
             font-size: 0.9rem;
+            line-height: 1.55;
         }
 
         .grid {
@@ -169,12 +302,13 @@
             font-size: 0.95rem;
             outline: none;
             transition: 0.22s ease;
+            appearance: none;
         }
 
         .field input:focus,
         .field select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(109, 124, 255, 0.18);
+            box-shadow: 0 0 0 4px rgba(0, 113, 206, 0.18);
             transform: translateY(-1px);
         }
 
@@ -206,7 +340,7 @@
             background: linear-gradient(135deg, var(--primary), var(--primary-2));
             color: white;
             flex: 1;
-            box-shadow: 0 10px 30px rgba(109, 124, 255, 0.35);
+            box-shadow: 0 10px 30px rgba(0, 113, 206, 0.35);
         }
 
         .btn-primary:hover {
@@ -237,11 +371,20 @@
         }
 
         .result-hero {
-            background: linear-gradient(135deg, rgba(109, 124, 255, 0.24), rgba(141, 92, 246, 0.24));
+            background: linear-gradient(135deg, rgba(0, 113, 206, 0.26), rgba(0, 76, 145, 0.26));
             border: 1px solid var(--border);
             border-radius: 22px;
             padding: 22px;
             margin-bottom: 18px;
+        }
+
+        .result-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
         }
 
         .result-kicker {
@@ -249,7 +392,15 @@
             text-transform: uppercase;
             letter-spacing: 1.3px;
             color: #d6deff;
-            margin-bottom: 8px;
+        }
+
+        .result-chip {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #6a4a00;
+            background: var(--accent);
+            border-radius: 999px;
+            padding: 6px 10px;
         }
 
         .result-value {
@@ -264,6 +415,37 @@
             margin: 0;
             color: #e8edff;
             font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 18px;
+            color: #101828;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: #667085;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1.1;
         }
 
         .insight-box,
@@ -303,6 +485,7 @@
         }
 
         @media (max-width: 1120px) {
+            .hero,
             .dashboard {
                 grid-template-columns: 1fr;
             }
@@ -314,25 +497,19 @@
 
         @media (max-width: 760px) {
             .grid-2,
-            .grid-3 {
+            .grid-3,
+            .stats {
                 grid-template-columns: 1fr;
             }
 
             .form-panel,
-            .results-panel {
+            .results-panel,
+            .hero-left {
                 padding: 18px;
             }
 
             .section {
                 padding: 16px;
-            }
-
-            .hero {
-                align-items: flex-start;
-            }
-
-            .hero-badge {
-                white-space: normal;
             }
         }
     </style>
@@ -342,29 +519,56 @@
 
         <header class="hero">
             <div class="hero-left">
-                <h1>Weekly Sales Forecast Studio</h1>
+                <div class="hero-topline">
+                    <div class="spark">✦</div>
+                    <div class="hero-label">Walmart Retail Forecasting</div>
+                </div>
+
+                <h1>Weekly Sales Forecast</h1>
                 <p>
-                    Une interface pour prédire les ventes hebdomadaires par magasin et département
-                    avec un modèle LightGBM.
+                    Prédiction des ventes hebdomadaires par magasin et département.
                 </p>
+
+                <div class="hero-badges">
+                    <div class="hero-badge">Walmart</div>
+                    <div class="hero-badge">LightGBM</div>
+                    <div class="hero-badge">Forecasting</div>
+                </div>
             </div>
-            <div class="hero-badge">
-                ML Forecasting • Flask • LightGBM
+
+            <div class="hero-photo">
+                <div class="hero-photo-content">
+                    <div class="hero-photo-chip">Retail Forecasting</div>
+                    <div class="hero-photo-title">Walmart Sales Prediction</div>
+                    <div class="hero-photo-text">
+                        Analyse et prévision des ventes hebdomadaires.
+                    </div>
+                </div>
             </div>
         </header>
 
         <main class="dashboard">
             <section class="glass-panel form-panel">
-                <h2 class="panel-title">Configuration de la prédiction</h2>
+                <h2 class="panel-title">Prediction Inputs</h2>
                 <p class="panel-subtitle">
-                    Renseigne uniquement les variables réellement utiles au modèle.
+                    Renseigne les variables requises.
                 </p>
+
+                <div class="helper-box">
+                    <strong>Important</strong>
+                    <span>
+                        La date doit correspondre à la prochaine semaine autorisée.
+                    </span>
+                </div>
 
                 <form method="POST">
 
                     <div class="section">
-                        <h3>1. Forecast Setup</h3>
-                        <p>Informations principales du scénario de prévision.</p>
+                        <div class="section-head">
+                            <h3>1. Forecast Setup</h3>
+                            <span class="section-tag">Required</span>
+                        </div>
+                        <p>Paramètres principaux.</p>
 
                         <div class="grid grid-2">
                             <div class="field">
@@ -385,15 +589,20 @@
 
                             <div class="field">
                                 <label for="IsHoliday">Holiday Week</label>
-                                <input type="number" min="0" max="1" id="IsHoliday" name="IsHoliday" value="{{ form_data.get('IsHoliday', '') }}" required>
-                                <small>Utilise 0 pour non et 1 pour oui.</small>
+                                <select id="IsHoliday" name="IsHoliday" required>
+                                    <option value="0" {% if form_data.get('IsHoliday') == '0' %}selected{% endif %}>Non</option>
+                                    <option value="1" {% if form_data.get('IsHoliday') == '1' %}selected{% endif %}>Oui</option>
+                                </select>
                             </div>
                         </div>
                     </div>
 
                     <div class="section">
-                        <h3>2. Store Context</h3>
-                        <p>Informations structurelles du magasin.</p>
+                        <div class="section-head">
+                            <h3>2. Store Context</h3>
+                            <span class="section-tag">Business</span>
+                        </div>
+                        <p>Contexte magasin.</p>
 
                         <div class="grid grid-2">
                             <div class="field">
@@ -413,8 +622,11 @@
                     </div>
 
                     <div class="section">
-                        <h3>3. Promotion Input</h3>
-                        <p>Variable promotionnelle retenue par le modèle.</p>
+                        <div class="section-head">
+                            <h3>3. Promotion Input</h3>
+                            <span class="section-tag">Driver</span>
+                        </div>
+                        <p>Signal promotionnel.</p>
 
                         <div class="grid grid-2">
                             <div class="field">
@@ -425,23 +637,35 @@
                     </div>
 
                     <div class="section">
-                        <h3>4. Event Flags</h3>
-                        <p>Encodage manuel des semaines événementielles.</p>
+                        <div class="section-head">
+                            <h3>4. Event Flags</h3>
+                            <span class="section-tag">Seasonality</span>
+                        </div>
+                        <p>Événements spéciaux.</p>
 
                         <div class="grid grid-3">
                             <div class="field">
                                 <label for="Black_Friday">Black Friday</label>
-                                <input type="number" min="0" max="1" id="Black_Friday" name="Black_Friday" value="{{ form_data.get('Black_Friday', '') }}" required>
+                                <select id="Black_Friday" name="Black_Friday" required>
+                                    <option value="0" {% if form_data.get('Black_Friday') == '0' %}selected{% endif %}>Non</option>
+                                    <option value="1" {% if form_data.get('Black_Friday') == '1' %}selected{% endif %}>Oui</option>
+                                </select>
                             </div>
 
                             <div class="field">
                                 <label for="Thanksgiving">Thanksgiving</label>
-                                <input type="number" min="0" max="1" id="Thanksgiving" name="Thanksgiving" value="{{ form_data.get('Thanksgiving', '') }}" required>
+                                <select id="Thanksgiving" name="Thanksgiving" required>
+                                    <option value="0" {% if form_data.get('Thanksgiving') == '0' %}selected{% endif %}>Non</option>
+                                    <option value="1" {% if form_data.get('Thanksgiving') == '1' %}selected{% endif %}>Oui</option>
+                                </select>
                             </div>
 
                             <div class="field">
                                 <label for="Xmas_Week">Christmas Week</label>
-                                <input type="number" min="0" max="1" id="Xmas_Week" name="Xmas_Week" value="{{ form_data.get('Xmas_Week', '') }}" required>
+                                <select id="Xmas_Week" name="Xmas_Week" required>
+                                    <option value="0" {% if form_data.get('Xmas_Week') == '0' %}selected{% endif %}>Non</option>
+                                    <option value="1" {% if form_data.get('Xmas_Week') == '1' %}selected{% endif %}>Oui</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -454,9 +678,9 @@
             </section>
 
             <aside class="glass-panel results-panel">
-                <h2 class="panel-title">Forecast Results</h2>
+                <h2 class="panel-title">Prediction Result</h2>
                 <p class="panel-subtitle">
-                    Zone d’analyse et de restitution du résultat de prédiction.
+                    Résultat généré par le modèle.
                 </p>
 
                 {% if error %}
@@ -467,30 +691,47 @@
 
                 {% if prediction is defined %}
                     <div class="result-hero">
-                        <div class="result-kicker">Predicted Weekly Sales</div>
-                        <div class="result-value">{{ prediction }}</div>
-                        <p class="result-model">Modèle utilisé : {{ model_used }}</p>
+                        <div class="result-top">
+                            <div class="result-kicker">Predicted Weekly Sales</div>
+                            <div class="result-chip">LightGBM Output</div>
+                        </div>
+
+                        <div class="result-value">{{ "{:,.2f}".format(prediction) }}</div>
+
+                        <p class="result-model">
+                            Dataset : Walmart<br>
+                            Modèle utilisé : {{ model_used }}
+                        </p>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Store / Dept</div>
+                            <div class="stat-value">{{ form_data.get('Store', '-') }} / {{ form_data.get('Dept', '-') }}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Forecast Date</div>
+                            <div class="stat-value">{{ form_data.get('Date', '-') }}</div>
+                        </div>
                     </div>
 
                     <div class="insight-box">
-                        <h3>Prediction Insight</h3>
+                        <h3>Summary</h3>
                         <p>
-                            Cette estimation correspond à la prochaine semaine autorisée pour le couple
-                            Store / Dept sélectionné, en utilisant le modèle LightGBM entraîné sur l’historique.
+                            Prévision calculée pour la semaine sélectionnée.
                         </p>
                     </div>
                 {% else %}
                     <div class="placeholder-box">
                         <h3>Prêt pour une prédiction</h3>
                         <p>
-                            Remplis le formulaire à gauche pour générer une estimation des ventes hebdomadaires.
-                            Le résultat s’affichera ici.
+                            Remplis le formulaire pour afficher la prédiction.
                         </p>
                     </div>
                 {% endif %}
 
                 <p class="footer-note">
-                    Vérifie bien la cohérence des variables saisies avant de lancer la prédiction.
+                    Vérifie les valeurs avant validation.
                 </p>
             </aside>
         </main>
