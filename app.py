@@ -37,7 +37,7 @@ def home():
             if store not in history["Store"].unique():
                 return render_template(
                     "index.html",
-                    error="Store invalide : ce magasin n'existe pas dans les données.",
+                    error="Store invalide : ce magasin n'existe pas",
                     form_data=request.form
                 )
 
