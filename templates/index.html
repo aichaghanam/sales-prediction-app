@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Sales Forecast Studio</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: rgba(255, 255, 255, 0.08);
+            --text: #eaf0ff;
+            --muted: #aab6d3;
+            --border: rgba(255, 255, 255, 0.12);
+            --primary: #6d7cff;
+            --primary-2: #8d5cf6;
+            --danger-bg: #fff1f2;
+            --danger-text: #b42318;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            --radius-xl: 24px;
+            --radius-lg: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(109, 124, 255, 0.22), transparent 30%),
+                radial-gradient(circle at top right, rgba(141, 92, 246, 0.18), transparent 25%),
+                linear-gradient(135deg, #0b1020 0%, #111933 45%, #0d1429 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .page {
+            width: min(1400px, 94%);
+            margin: 0 auto;
+            padding: 28px 0 40px;
+        }
+
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .hero-left h1 {
+            margin: 0 0 10px 0;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.05;
+            letter-spacing: -1px;
+        }
+
+        .hero-left p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1rem;
+            max-width: 760px;
+        }
+
+        .hero-badge {
+            background: linear-gradient(135deg, rgba(109, 124, 255, 0.25), rgba(141, 92, 246, 0.28));
+            border: 1px solid var(--border);
+            color: #f3f6ff;
+            padding: 12px 16px;
+            border-radius: 999px;
+            font-size: 0.95rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            white-space: nowrap;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .glass-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(14px);
+            box-shadow: var(--shadow);
+        }
+
+        .form-panel {
+            padding: 26px;
+        }
+
+        .results-panel {
+            padding: 24px;
+            position: sticky;
+            top: 18px;
+        }
+
+        .panel-title {
+            margin: 0 0 8px;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .panel-subtitle {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 0.96rem;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .section h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+            color: #ffffff;
+        }
+
+        .section p {
+            margin: 0 0 16px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #f3f6ff;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.95);
+            color: #101828;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.22s ease;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(109, 124, 255, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .field small {
+            color: var(--muted);
+            font-size: 0.76rem;
+            line-height: 1.4;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            border: none;
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 0.96rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: white;
+            flex: 1;
+            box-shadow: 0 10px 30px rgba(109, 124, 255, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.14);
+        }
+
+        .alert {
+            border-radius: 16px;
+            padding: 16px 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .alert-error {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+
+        .result-hero {
+            background: linear-gradient(135deg, rgba(109, 124, 255, 0.24), rgba(141, 92, 246, 0.24));
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .result-kicker {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            color: #d6deff;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            font-weight: 800;
+            line-height: 1;
+            margin: 0 0 10px;
+            color: white;
+        }
+
+        .result-model {
+            margin: 0;
+            color: #e8edff;
+            font-size: 0.98rem;
+        }
+
+        .insight-box,
+        .placeholder-box {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .insight-box h3,
+        .placeholder-box h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .insight-box p,
+        .placeholder-box p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+
+        .placeholder-box {
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1120px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .results-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .form-panel,
+            .results-panel {
+                padding: 18px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+
+            .hero {
+                align-items: flex-start;
+            }
+
+            .hero-badge {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <header class="hero">
+            <div class="hero-left">
+                <h1>Weekly Sales Forecast Studio</h1>
+                <p>
+                    Une interface pour prédire les ventes hebdomadaires par magasin et département
+                    avec un modèle LightGBM.
+                </p>
+            </div>
+            <div class="hero-badge">
+                ML Forecasting • Flask • LightGBM
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <section class="glass-panel form-panel">
+                <h2 class="panel-title">Configuration de la prédiction</h2>
+                <p class="panel-subtitle">
+                    Renseigne uniquement les variables réellement utiles au modèle.
+                </p>
+
+                <form method="POST">
+
+                    <div class="section">
+                        <h3>1. Forecast Setup</h3>
+                        <p>Informations principales du scénario de prévision.</p>
+
+                        <div class="grid grid-2">
+                            <div class="field">
+                                <label for="Store">Store ID</label>
+                                <input type="number" id="Store" name="Store" value="{{ form_data.get('Store', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Dept">Department ID</label>
+                                <input type="number" id="Dept" name="Dept" value="{{ form_data.get('Dept', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Date">Forecast Date</label>
+                                <input type="date" id="Date" name="Date" value="{{ form_data.get('Date', '') }}" required>
+                                <small>La date doit correspondre à la prochaine semaine autorisée.</small>
+                            </div>
+
+                            <div class="field">
+                                <label for="IsHoliday">Holiday Week</label>
+                                <input type="number" min="0" max="1" id="IsHoliday" name="IsHoliday" value="{{ form_data.get('IsHoliday', '') }}" required>
+                                <small>Utilise 0 pour non et 1 pour oui.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>2. Store Context</h3>
+                        <p>Informations structurelles du magasin.</p>
+
+                        <div class="grid grid-2">
+                            <div class="field">
+                                <label for="Size">Store Size</label>
+                                <input type="number" id="Size" name="Size" value="{{ form_data.get('Size', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Type">Store Type</label>
+                                <select id="Type" name="Type" required>
+                                    <option value="A" {% if form_data.get('Type') == 'A' %}selected{% endif %}>Type A</option>
+                                    <option value="B" {% if form_data.get('Type') == 'B' %}selected{% endif %}>Type B</option>
+                                    <option value="C" {% if form_data.get('Type') == 'C' %}selected{% endif %}>Type C</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>3. Promotion Input</h3>
+                        <p>Variable promotionnelle retenue par le modèle.</p>
+
+                        <div class="grid grid-2">
+                            <div class="field">
+                                <label for="MarkDown4">Promotion Signal 4</label>
+                                <input type="number" step="any" id="MarkDown4" name="MarkDown4" value="{{ form_data.get('MarkDown4', '') }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>4. Event Flags</h3>
+                        <p>Encodage manuel des semaines événementielles.</p>
+
+                        <div class="grid grid-3">
+                            <div class="field">
+                                <label for="Black_Friday">Black Friday</label>
+                                <input type="number" min="0" max="1" id="Black_Friday" name="Black_Friday" value="{{ form_data.get('Black_Friday', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Thanksgiving">Thanksgiving</label>
+                                <input type="number" min="0" max="1" id="Thanksgiving" name="Thanksgiving" value="{{ form_data.get('Thanksgiving', '') }}" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="Xmas_Week">Christmas Week</label>
+                                <input type="number" min="0" max="1" id="Xmas_Week" name="Xmas_Week" value="{{ form_data.get('Xmas_Week', '') }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn-primary" type="submit">Generate Forecast</button>
+                        <button class="btn-secondary" type="reset">Reset Form</button>
+                    </div>
+                </form>
+            </section>
+
+            <aside class="glass-panel results-panel">
+                <h2 class="panel-title">Forecast Results</h2>
+                <p class="panel-subtitle">
+                    Zone d’analyse et de restitution du résultat de prédiction.
+                </p>
+
+                {% if error %}
+                    <div class="alert alert-error">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                {% if prediction is defined %}
+                    <div class="result-hero">
+                        <div class="result-kicker">Predicted Weekly Sales</div>
+                        <div class="result-value">{{ prediction }}</div>
+                        <p class="result-model">Modèle utilisé : {{ model_used }}</p>
+                    </div>
+
+                    <div class="insight-box">
+                        <h3>Prediction Insight</h3>
+                        <p>
+                            Cette estimation correspond à la prochaine semaine autorisée pour le couple
+                            Store / Dept sélectionné, en utilisant le modèle LightGBM entraîné sur l’historique.
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="placeholder-box">
+                        <h3>Prêt pour une prédiction</h3>
+                        <p>
+                            Remplis le formulaire à gauche pour générer une estimation des ventes hebdomadaires.
+                            Le résultat s’affichera ici.
+                        </p>
+                    </div>
+                {% endif %}
+
+                <p class="footer-note">
+                    Vérifie bien la cohérence des variables saisies avant de lancer la prédiction.
+                </p>
+            </aside>
+        </main>
+    </div>
+</body>
+</html>
