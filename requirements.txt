@@ -3,4 +3,5 @@ pandas
 numpy
 scikit-learn
 gunicorn
-lightgbm
+xgboost
+openpyxl
