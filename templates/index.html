@@ -113,6 +113,7 @@
             max-width: 760px;
         }
 
+        
         .hero-badges {
             display: flex;
             gap: 10px;
@@ -537,6 +538,13 @@
             .section {
                 padding: 16px;
             }
+
+        }
+        .field input[readonly] {
+            background: rgba(255,255,255,0.6) !important;
+            color: #666 !important;
+            cursor: not-allowed !important;
+            border: 1px dashed rgba(255,255,255,0.25) !important;
         }
     </style>
 </head>
@@ -557,7 +565,6 @@
 
                 <div class="hero-badges">
                     <div class="hero-badge">Walmart</div>
-                    <div class="hero-badge">LightGBM</div>
                     <div class="hero-badge">Forecasting</div>
                 </div>
             </div>
@@ -580,14 +587,26 @@
                     Renseigne les variables requises.
                 </p>
 
-                <div class="helper-box">
-                    <strong>Important</strong>
-                    <span>
-                        La date doit correspondre à la prochaine semaine autorisée.
-                    </span>
-                </div>
+                <form method="POST" enctype="multipart/form-data" onsubmit="return handleSubmit()">
+                    <div class="helper-box">
+                        <strong>Important</strong>
+                        <span>
+                            La date doit correspondre à la prochaine semaine autorisée. Si un fichier Excel est sélectionné, le formulaire manuel sera ignoré.
+                        </span>
+                    </div>
 
-                <form method="POST">
+                    <div class="section">
+                        <div class="section-head">
+                            <h3>Upload Excel</h3>
+                            <span class="section-tag">Batch</span>
+                        </div>
+                        <p>Importer un fichier Excel contenant plusieurs lignes de données.</p>
+
+                        <div class="field">
+                            <label for="file">Fichier Excel (.xlsx)</label>
+                            <input type="file" id="file" name="file" accept=".xlsx">
+                        </div>
+                    </div>
 
                     <div class="section">
                         <div class="section-head">
@@ -599,65 +618,100 @@
                         <div class="grid grid-2">
                             <div class="field">
                                 <label for="Store">Store ID</label>
-                                <input type="number" id="Store" name="Store" value="{{ form_data.get('Store', '') }}" required>
+                                <input type="number" id="Store" name="Store" value="{{ form_data.get('Store', '') }}">
                             </div>
 
                             <div class="field">
                                 <label for="Dept">Department ID</label>
-                                <input type="number" id="Dept" name="Dept" value="{{ form_data.get('Dept', '') }}" required>
+                                <input type="number" id="Dept" name="Dept" value="{{ form_data.get('Dept', '') }}">
                             </div>
 
                             <div class="field">
                                 <label for="Date">Forecast Date</label>
-                                <input type="date" id="Date" name="Date" value="{{ form_data.get('Date', '') }}" required>
+                                <input type="date" id="Date" name="Date" value="{{ form_data.get('Date', '') }}">
                                 <small>La date doit correspondre à la prochaine semaine autorisée.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-head">
+                            <h3>2. Economic &amp; Store Context</h3>
+                            <span class="section-tag">Business</span>
+                        </div>
+                        <p>Contexte économique et magasin.</p>
+
+                        <div class="grid grid-2">
+                            <div class="field">
+                                <label for="Temperature">Temperature</label>
+                                <input type="number" step="any" id="Temperature" name="Temperature" value="{{ form_data.get('Temperature', '') }}">
+                            </div>
+
+                            <div class="field">
+                                <label for="Fuel_Price">Fuel Price</label>
+                                <input type="number" step="any" id="Fuel_Price" name="Fuel_Price" value="{{ form_data.get('Fuel_Price', '') }}">
+                            </div>
+
+                            <div class="field">
+                                <label for="CPI">CPI</label>
+                                <input type="number" step="any" id="CPI" name="CPI" value="{{ form_data.get('CPI', '') }}">
+                            </div>
+
+                            <div class="field">
+                                <label for="Unemployment">Unemployment</label>
+                                <input type="number" step="any" id="Unemployment" name="Unemployment" value="{{ form_data.get('Unemployment', '') }}">
+                            </div>
+
+                            <div class="field">
+                                <label>Store Size</label>
+                                <input type="text" value="{{ form_data.get('Size', '-') }}" readonly>
+                            </div>
+                            <div class="field">
+                                <label>Store Type</label>
+                                <input type="text" value="{{ form_data.get('Type', '-') }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-head">
+                            <h3>3. Promotion Inputs</h3>
+                            <span class="section-tag">Driver</span>
+                        </div>
+                        <p>Signaux promotionnels et semaine fériée.</p>
+
+                        <div class="grid grid-2">
+                            <div class="field">
+                                <label for="MarkDown1">Promotion Signal 1</label>
+                                <input type="number" step="any" id="MarkDown1" name="MarkDown1" value="{{ form_data.get('MarkDown1', '') }}">
+                            </div>
+
+                            <div class="field">
+                                <label for="MarkDown2">Promotion Signal 2</label>
+                                <input type="number" step="any" id="MarkDown2" name="MarkDown2" value="{{ form_data.get('MarkDown2', '') }}">
+                            </div>
+
+                            <div class="field">
+                                <label for="MarkDown3">Promotion Signal 3</label>
+                                <input type="number" step="any" id="MarkDown3" name="MarkDown3" value="{{ form_data.get('MarkDown3', '') }}">
+                            </div>
+
+                            <div class="field">
+                                <label for="MarkDown4">Promotion Signal 4</label>
+                                <input type="number" step="any" id="MarkDown4" name="MarkDown4" value="{{ form_data.get('MarkDown4', '') }}">
+                            </div>
+
+                            <div class="field">
+                                <label for="MarkDown5">Promotion Signal 5</label>
+                                <input type="number" step="any" id="MarkDown5" name="MarkDown5" value="{{ form_data.get('MarkDown5', '') }}">
                             </div>
 
                             <div class="field">
                                 <label for="IsHoliday">Holiday Week</label>
-                                <select id="IsHoliday" name="IsHoliday" required>
+                                <select id="IsHoliday" name="IsHoliday">
                                     <option value="0" {% if form_data.get('IsHoliday') == '0' %}selected{% endif %}>Non</option>
                                     <option value="1" {% if form_data.get('IsHoliday') == '1' %}selected{% endif %}>Oui</option>
                                 </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-head">
-                            <h3>2. Store Context</h3>
-                            <span class="section-tag">Business</span>
-                        </div>
-                        <p>Contexte magasin.</p>
-
-                        <div class="grid grid-2">
-                            <div class="field">
-                                <label for="Size">Store Size</label>
-                                <input type="number" id="Size" name="Size" value="{{ form_data.get('Size', '') }}" required>
-                            </div>
-
-                            <div class="field">
-                                <label for="Type">Store Type</label>
-                                <select id="Type" name="Type" required>
-                                    <option value="A" {% if form_data.get('Type') == 'A' %}selected{% endif %}>Type A</option>
-                                    <option value="B" {% if form_data.get('Type') == 'B' %}selected{% endif %}>Type B</option>
-                                    <option value="C" {% if form_data.get('Type') == 'C' %}selected{% endif %}>Type C</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-head">
-                            <h3>3. Promotion Input</h3>
-                            <span class="section-tag">Driver</span>
-                        </div>
-                        <p>Signal promotionnel.</p>
-
-                        <div class="grid grid-2">
-                            <div class="field">
-                                <label for="MarkDown4">Promotion Signal 4</label>
-                                <input type="number" step="any" id="MarkDown4" name="MarkDown4" value="{{ form_data.get('MarkDown4', '') }}" required>
                             </div>
                         </div>
                     </div>
@@ -672,7 +726,7 @@
                         <div class="grid grid-3">
                             <div class="field">
                                 <label for="Black_Friday">Black Friday</label>
-                                <select id="Black_Friday" name="Black_Friday" required>
+                                <select id="Black_Friday" name="Black_Friday">
                                     <option value="0" {% if form_data.get('Black_Friday') == '0' %}selected{% endif %}>Non</option>
                                     <option value="1" {% if form_data.get('Black_Friday') == '1' %}selected{% endif %}>Oui</option>
                                 </select>
@@ -680,7 +734,7 @@
 
                             <div class="field">
                                 <label for="Thanksgiving">Thanksgiving</label>
-                                <select id="Thanksgiving" name="Thanksgiving" required>
+                                <select id="Thanksgiving" name="Thanksgiving">
                                     <option value="0" {% if form_data.get('Thanksgiving') == '0' %}selected{% endif %}>Non</option>
                                     <option value="1" {% if form_data.get('Thanksgiving') == '1' %}selected{% endif %}>Oui</option>
                                 </select>
@@ -688,7 +742,7 @@
 
                             <div class="field">
                                 <label for="Xmas_Week">Christmas Week</label>
-                                <select id="Xmas_Week" name="Xmas_Week" required>
+                                <select id="Xmas_Week" name="Xmas_Week">
                                     <option value="0" {% if form_data.get('Xmas_Week') == '0' %}selected{% endif %}>Non</option>
                                     <option value="1" {% if form_data.get('Xmas_Week') == '1' %}selected{% endif %}>Oui</option>
                                 </select>
@@ -719,7 +773,7 @@
                     <div class="result-hero">
                         <div class="result-top">
                             <div class="result-kicker">Predicted Weekly Sales</div>
-                            <div class="result-chip">LightGBM Output</div>
+                            <div class="result-chip">XGBoost Output</div>
                         </div>
 
                         <div class="result-value">{{ "{:,.2f}".format(prediction) }}</div>
@@ -769,7 +823,7 @@
                     <div class="placeholder-box">
                         <h3>Prêt pour une prédiction</h3>
                         <p>
-                            Remplis le formulaire pour afficher la prédiction.
+                            Remplis le formulaire ou importe un Excel pour afficher la prédiction.
                         </p>
                     </div>
                 {% endif %}
@@ -783,20 +837,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-{% if prediction is defined %}
-<script id="chart-data" type="application/json">
-{
-  "labels": {{ chart_labels | tojson }},
-  "values": {{ chart_values | tojson }}
-}
-</script>
+    {% if prediction is defined %}
+    <script id="chart-data" type="application/json">
+    {
+      "labels": {{ chart_labels | tojson }},
+      "values": {{ chart_values | tojson }}
+    }
+    </script>
 
-<script>
-const rawData = document.getElementById("chart-data").textContent;
-const parsed = JSON.parse(rawData);
+    <script>
+    const rawData = document.getElementById("chart-data").textContent;
+    const parsed = JSON.parse(rawData);
 
-const labels = parsed.labels;
-const values = parsed.values;
+    const labels = parsed.labels;
+    const values = parsed.values;
 
     const canvas = document.getElementById("salesChart");
 
@@ -890,7 +944,23 @@ const values = parsed.values;
             plugins: [valueLabelPlugin]
         });
     }
-</script>
-{% endif %}
+    </script>
+    {% endif %}
+
+    <script>
+    function handleSubmit() {
+        const fileInput = document.getElementById("file");
+
+        if (fileInput && fileInput.files.length > 0) {
+            document.querySelectorAll("input, select").forEach(el => {
+                if (el.id !== "file") {
+                    el.removeAttribute("required");
+                }
+            });
+        }
+
+        return true;
+    }
+    </script>
 </body>
 </html>
