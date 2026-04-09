@@ -236,7 +236,7 @@ def home():
             if dept not in valid_depts:
                 return render_template(
                     "index.html",
-                    error="Dept invalide",
+                    error="Deptartement invalide",
                     form_data=request.form,
                     chart_labels=[],
                     chart_values=[]
@@ -261,7 +261,7 @@ def home():
             if date_input != next_allowed_date:
                 return render_template(
                     "index.html",
-                    error=f"Date invalide : {next_allowed_date.strftime('%d/%m/%Y')}",
+                    error=f"Date non valide. La Semaine valide à prédire est : {next_allowed_date.strftime('%d/%m/%Y')}",
                     form_data=request.form,
                     chart_labels=[],
                     chart_values=[]
