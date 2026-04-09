@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walmart Weekly Sales Forecast</title>
+    <title>Prévision des ventes hebdomadaires</title>
     <style>
         :root {
             --bg: #0b1020;
@@ -113,7 +113,6 @@
             max-width: 760px;
         }
 
-        
         .hero-badges {
             display: flex;
             gap: 10px;
@@ -395,28 +394,12 @@
             color: #d6deff;
         }
 
-        .result-chip {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #6a4a00;
-            background: var(--accent);
-            border-radius: 999px;
-            padding: 6px 10px;
-        }
-
         .result-value {
             font-size: clamp(2rem, 4vw, 3.4rem);
             font-weight: 800;
             line-height: 1;
             margin: 0 0 10px;
             color: white;
-        }
-
-        .result-model {
-            margin: 0;
-            color: #e8edff;
-            font-size: 0.98rem;
-            line-height: 1.6;
         }
 
         .stats {
@@ -538,8 +521,8 @@
             .section {
                 padding: 16px;
             }
-
         }
+
         .field input[readonly] {
             background: rgba(255,255,255,0.6) !important;
             color: #666 !important;
@@ -555,26 +538,23 @@
             <div class="hero-left">
                 <div class="hero-topline">
                     <div class="spark">✦</div>
-                    <div class="hero-label">Walmart Retail Forecasting</div>
+                    <div class="hero-label">Prévision commerciale Walmart</div>
                 </div>
 
-                <h1>Weekly Sales Forecast</h1>
+                <h1>Prévision des ventes hebdomadaires</h1>
                 <p>
-                    Prédiction des ventes hebdomadaires par magasin et département.
+                    Anticipez les ventes hebdomadaires par magasin et par département.
                 </p>
 
                 <div class="hero-badges">
                     <div class="hero-badge">Walmart</div>
-                    <div class="hero-badge">Forecasting</div>
+                    <div class="hero-badge">Prévision</div>
                 </div>
             </div>
 
             <div class="hero-photo">
                 <div class="hero-photo-content">
-                    <div class="hero-photo-chip">Retail Forecasting</div>
-                    <div class="hero-photo-title">Walmart Sales Prediction</div>
                     <div class="hero-photo-text">
-                        Analyse et prévision des ventes hebdomadaires.
                     </div>
                 </div>
             </div>
@@ -582,14 +562,14 @@
 
         <main class="dashboard">
             <section class="glass-panel form-panel">
-                <h2 class="panel-title">Prediction Inputs</h2>
+                <h2 class="panel-title">Paramètres de prévision</h2>
                 <p class="panel-subtitle">
-                    Renseigne les variables requises.
+                    Complétez les informations ci-dessous pour générer une prévision.
                 </p>
 
                 <form method="POST" enctype="multipart/form-data" onsubmit="return handleSubmit()">
                     <div class="helper-box">
-                        <strong>Important</strong>
+                        <strong>Information importante</strong>
                         <span>
                             La date doit correspondre à la prochaine semaine autorisée. Si un fichier Excel est sélectionné, le formulaire manuel sera ignoré.
                         </span>
@@ -597,10 +577,10 @@
 
                     <div class="section">
                         <div class="section-head">
-                            <h3>Upload Excel</h3>
-                            <span class="section-tag">Batch</span>
+                            <h3>Import de fichier Excel</h3>
+                            <span class="section-tag">Traitement groupé</span>
                         </div>
-                        <p>Importer un fichier Excel contenant plusieurs lignes de données.</p>
+                        <p>Importez un fichier Excel contenant plusieurs lignes de données.</p>
 
                         <div class="field">
                             <label for="file">Fichier Excel (.xlsx)</label>
@@ -610,24 +590,24 @@
 
                     <div class="section">
                         <div class="section-head">
-                            <h3>1. Forecast Setup</h3>
-                            <span class="section-tag">Required</span>
+                            <h3>1. Paramètres principaux</h3>
+                            <span class="section-tag">Obligatoire</span>
                         </div>
-                        <p>Paramètres principaux.</p>
+                        <p>Informations essentielles pour lancer la prévision.</p>
 
                         <div class="grid grid-2">
                             <div class="field">
-                                <label for="Store">Store ID</label>
+                                <label for="Store">Identifiant du magasin</label>
                                 <input type="number" id="Store" name="Store" value="{{ form_data.get('Store', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="Dept">Department ID</label>
+                                <label for="Dept">Identifiant du département</label>
                                 <input type="number" id="Dept" name="Dept" value="{{ form_data.get('Dept', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="Date">Forecast Date</label>
+                                <label for="Date">Date de prévision</label>
                                 <input type="date" id="Date" name="Date" value="{{ form_data.get('Date', '') }}">
                                 <small>La date doit correspondre à la prochaine semaine autorisée.</small>
                             </div>
@@ -636,38 +616,38 @@
 
                     <div class="section">
                         <div class="section-head">
-                            <h3>2. Economic &amp; Store Context</h3>
-                            <span class="section-tag">Business</span>
+                            <h3>2. Contexte économique du magasin</h3>
+                            <span class="section-tag">Contexte métier</span>
                         </div>
-                        <p>Contexte économique et magasin.</p>
+                        <p>Indicateurs économiques et caractéristiques du magasin.</p>
 
                         <div class="grid grid-2">
                             <div class="field">
-                                <label for="Temperature">Temperature</label>
+                                <label for="Temperature">Température</label>
                                 <input type="number" step="any" id="Temperature" name="Temperature" value="{{ form_data.get('Temperature', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="Fuel_Price">Fuel Price</label>
+                                <label for="Fuel_Price">Prix du carburant</label>
                                 <input type="number" step="any" id="Fuel_Price" name="Fuel_Price" value="{{ form_data.get('Fuel_Price', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="CPI">CPI</label>
+                                <label for="CPI">Indice des prix (CPI)</label>
                                 <input type="number" step="any" id="CPI" name="CPI" value="{{ form_data.get('CPI', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="Unemployment">Unemployment</label>
+                                <label for="Unemployment">Taux de chômage</label>
                                 <input type="number" step="any" id="Unemployment" name="Unemployment" value="{{ form_data.get('Unemployment', '') }}">
                             </div>
 
                             <div class="field">
-                                <label>Store Size</label>
+                                <label>Taille du magasin</label>
                                 <input type="text" value="{{ form_data.get('Size', '-') }}" readonly>
                             </div>
                             <div class="field">
-                                <label>Store Type</label>
+                                <label>Type de magasin</label>
                                 <input type="text" value="{{ form_data.get('Type', '-') }}" readonly>
                             </div>
                         </div>
@@ -675,39 +655,39 @@
 
                     <div class="section">
                         <div class="section-head">
-                            <h3>3. Promotion Inputs</h3>
-                            <span class="section-tag">Driver</span>
+                            <h3>3. Promotions et remises</h3>
+                            <span class="section-tag">Leviers commerciaux</span>
                         </div>
-                        <p>Signaux promotionnels et semaine fériée.</p>
+                        <p>Signaux promotionnels et indication de semaine fériée.</p>
 
                         <div class="grid grid-2">
                             <div class="field">
-                                <label for="MarkDown1">Promotion Signal 1</label>
+                                <label for="MarkDown1">Signal promotionnel 1</label>
                                 <input type="number" step="any" id="MarkDown1" name="MarkDown1" value="{{ form_data.get('MarkDown1', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="MarkDown2">Promotion Signal 2</label>
+                                <label for="MarkDown2">Signal promotionnel 2</label>
                                 <input type="number" step="any" id="MarkDown2" name="MarkDown2" value="{{ form_data.get('MarkDown2', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="MarkDown3">Promotion Signal 3</label>
+                                <label for="MarkDown3">Signal promotionnel 3</label>
                                 <input type="number" step="any" id="MarkDown3" name="MarkDown3" value="{{ form_data.get('MarkDown3', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="MarkDown4">Promotion Signal 4</label>
+                                <label for="MarkDown4">Signal promotionnel 4</label>
                                 <input type="number" step="any" id="MarkDown4" name="MarkDown4" value="{{ form_data.get('MarkDown4', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="MarkDown5">Promotion Signal 5</label>
+                                <label for="MarkDown5">Signal promotionnel 5</label>
                                 <input type="number" step="any" id="MarkDown5" name="MarkDown5" value="{{ form_data.get('MarkDown5', '') }}">
                             </div>
 
                             <div class="field">
-                                <label for="IsHoliday">Holiday Week</label>
+                                <label for="IsHoliday">Semaine fériée</label>
                                 <select id="IsHoliday" name="IsHoliday">
                                     <option value="0" {% if form_data.get('IsHoliday') == '0' %}selected{% endif %}>Non</option>
                                     <option value="1" {% if form_data.get('IsHoliday') == '1' %}selected{% endif %}>Oui</option>
@@ -718,10 +698,10 @@
 
                     <div class="section">
                         <div class="section-head">
-                            <h3>4. Event Flags</h3>
-                            <span class="section-tag">Seasonality</span>
+                            <h3>4. Événements commerciaux</h3>
+                            <span class="section-tag">Saisonnalité</span>
                         </div>
-                        <p>Événements spéciaux.</p>
+                        <p>Événements spécifiques susceptibles d’influencer les ventes.</p>
 
                         <div class="grid grid-3">
                             <div class="field">
@@ -741,7 +721,7 @@
                             </div>
 
                             <div class="field">
-                                <label for="Xmas_Week">Christmas Week</label>
+                                <label for="Xmas_Week">Semaine de Noël</label>
                                 <select id="Xmas_Week" name="Xmas_Week">
                                     <option value="0" {% if form_data.get('Xmas_Week') == '0' %}selected{% endif %}>Non</option>
                                     <option value="1" {% if form_data.get('Xmas_Week') == '1' %}selected{% endif %}>Oui</option>
@@ -751,17 +731,15 @@
                     </div>
 
                     <div class="actions">
-                        <button class="btn-primary" type="submit">Generate Forecast</button>
-                        <button class="btn-secondary" type="reset">Reset Form</button>
+                        <button class="btn-primary" type="submit">Lancer la prévision</button>
+                        <button class="btn-secondary" type="reset">Réinitialiser</button>
                     </div>
                 </form>
             </section>
 
             <aside class="glass-panel results-panel">
-                <h2 class="panel-title">Prediction Result</h2>
-                <p class="panel-subtitle">
-                    Résultat généré par le modèle.
-                </p>
+                <h2 class="panel-title">Résultat de la prévision</h2>
+                <p class="panel-subtitle"></p>
 
                 {% if error %}
                     <div class="alert alert-error">
@@ -772,31 +750,25 @@
                 {% if prediction is defined %}
                     <div class="result-hero">
                         <div class="result-top">
-                            <div class="result-kicker">Predicted Weekly Sales</div>
-                            <div class="result-chip">XGBoost Output</div>
+                            <div class="result-kicker">Ventes hebdomadaires prévisionnelles</div>
                         </div>
 
-                        <div class="result-value">{{ "{:,.2f}".format(prediction) }}</div>
-
-                        <p class="result-model">
-                            Dataset : Walmart<br>
-                            Modèle utilisé : {{ model_used }}
-                        </p>
+                        <div class="result-value">{{ "{:,.2f}".format(prediction) }} $</div>
                     </div>
 
                     <div class="stats">
                         <div class="stat-card">
-                            <div class="stat-label">Store / Dept</div>
+                            <div class="stat-label">Magasin / Département</div>
                             <div class="stat-value">{{ form_data.get('Store', '-') }} / {{ form_data.get('Dept', '-') }}</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">Forecast Date</div>
-                            <div class="stat-value">{{ form_data.get('Date', '-') }}</div>
+                            <div class="stat-label">Date de prévision</div>
+                            <div class="stat-value js-date-full">{{ form_data.get('Date', '-') }}</div>
                         </div>
                     </div>
 
                     <div class="insight-box">
-                        <h3>Summary</h3>
+                        <h3>Synthèse</h3>
                         <p>
                             Prévision calculée pour la semaine sélectionnée.
                         </p>
@@ -808,11 +780,11 @@
                             Comparaison entre la moyenne des 4 dernières semaines, la dernière semaine observée
                             et la prévision pour le couple
                             <span style="color:#ffc220; font-weight:600;">
-                            Store {{ form_data.get('Store', '-') }} / Dept {{ form_data.get('Dept', '-') }}
+                                magasin {{ form_data.get('Store', '-') }} / département {{ form_data.get('Dept', '-') }}
                             </span>
                             pour la semaine du
-                            <span style="color:#ffc220; font-weight:600;">
-                            {{ date }}
+                            <span style="color:#ffc220; font-weight:600;" class="js-date-full">
+                                {{ date }}
                             </span>.
                         </p>
                         <div class="chart-wrapper">
@@ -821,15 +793,15 @@
                     </div>
                 {% else %}
                     <div class="placeholder-box">
-                        <h3>Prêt pour une prédiction</h3>
+                        <h3>Aucune prévision affichée</h3>
                         <p>
-                            Remplis le formulaire ou importe un Excel pour afficher la prédiction.
+                            Complétez le formulaire ou importez un fichier Excel pour afficher une prévision.
                         </p>
                     </div>
                 {% endif %}
 
                 <p class="footer-note">
-                    Les résultats dépendent des données saisies et de l’historique disponible pour le Store et le Département sélectionnés.
+                    Les résultats dépendent des données saisies et de l’historique disponible pour le magasin et le département sélectionnés.
                 </p>
             </aside>
         </main>
@@ -868,7 +840,7 @@
                 meta.data.forEach((bar, index) => {
                     const value = values[index];
                     ctx.fillText(
-                        Number(value).toLocaleString(),
+                        Number(value).toLocaleString("fr-FR"),
                         bar.x,
                         bar.y - 10
                     );
@@ -883,7 +855,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: "Weekly Sales",
+                    label: "Ventes hebdomadaires",
                     data: values,
                     backgroundColor: [
                         "rgba(255,255,255,0.75)",
@@ -914,7 +886,7 @@
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return "Weekly Sales : " + Number(context.raw).toLocaleString();
+                                return "Ventes hebdomadaires : " + Number(context.raw).toLocaleString("fr-FR");
                             }
                         }
                     }
@@ -933,7 +905,10 @@
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            color: "#d8e0f8"
+                            color: "#d8e0f8",
+                            callback: function(value) {
+                                return Number(value).toLocaleString("fr-FR");
+                            }
                         },
                         grid: {
                             color: "rgba(255,255,255,0.08)"
@@ -961,6 +936,26 @@
 
         return true;
     }
+
+    function formatDateFullFr(dateStr) {
+        if (!dateStr || dateStr === "-") return dateStr;
+
+        const parts = dateStr.split("-");
+        if (parts.length !== 3) return dateStr;
+
+        const [year, month, day] = parts;
+        const date = new Date(Number(year), Number(month) - 1, Number(day));
+
+        return new Intl.DateTimeFormat("fr-FR", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        }).format(date);
+    }
+
+    document.querySelectorAll(".js-date-full").forEach(el => {
+        el.textContent = formatDateFullFr(el.textContent.trim());
+    });
     </script>
 </body>
 </html>
